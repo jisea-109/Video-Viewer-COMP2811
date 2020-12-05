@@ -27,7 +27,7 @@
 #include <QtCore/QDirIterator>
 #include "the_player.h"
 #include "the_button.h"
-
+#include "add_file.h"
 
 using namespace std;
 
@@ -133,16 +133,37 @@ int main(int argc, char *argv[]) {
     // tell the player what buttons and videos are available
     player->setContent(&buttons, & videos);
 
-    // create the main window and layout
-    QWidget window;
+    // create the video player and buttons layout
+    QWidget *topWidget = new QWidget;
     QVBoxLayout *top = new QVBoxLayout();
-    window.setLayout(top);
-    window.setWindowTitle("tomeo");
-    window.setMinimumSize(800, 680);
+    topWidget->setLayout(top);
 
     // add the video and the buttons to the top level widget
     top->addWidget(videoWidget);
     top->addWidget(buttonWidget);
+
+    //buttons in column to left
+    QWidget *leftButtonsWidget = new QWidget;
+    AddFile *addFileButton = new AddFile(leftButtonsWidget, *layout);
+    addFileButton->videoButtonsWidget=buttonWidget;
+    addFileButton->videoButtonsLayout=layout;
+    addFileButton->player=player;
+    addFileButton->buttons=buttons;
+    addFileButton->videos=videos;
+    QVBoxLayout *leftColumn = new QVBoxLayout();
+    leftButtonsWidget->setLayout(leftColumn);
+    leftColumn->addWidget(addFileButton);
+
+
+    QWidget window;
+    QHBoxLayout *main = new QHBoxLayout();
+    window.setLayout(main);
+    window.setWindowTitle("tomeo");
+    window.setMinimumSize(800, 680);
+
+    main->addWidget(leftButtonsWidget);
+    main->addWidget(topWidget);
+
 
     // showtime!
     window.show();
@@ -150,3 +171,4 @@ int main(int argc, char *argv[]) {
     // wait for the app to terminate
     return app.exec();
 }
+//what changed? changed layout, added "create file" button,
