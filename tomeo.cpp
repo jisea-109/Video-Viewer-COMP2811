@@ -28,9 +28,9 @@
 #include <QLabel>
 #include <QScrollArea>
 #include <QScrollBar>
-#include <utility>
 #include "the_player.h"
 #include "the_button.h"
+#include "add_file.h"
 
 
 using namespace std;
@@ -157,16 +157,35 @@ int main(int argc, char *argv[]) {
     // set the widget of the scrolling bay (containing all the buttons & labels)
     videoBay->setWidget(buttonWidget);
 
-    // create the main window and layout
-    QWidget window;
-    QVBoxLayout *top = new QVBoxLayout();
-    window.setLayout(top);
-    window.setWindowTitle("tomeo");
-    window.setMinimumSize(1000, 710);
-
     // add the video and the buttons to the top level widget
+    QWidget *topWidget = new QWidget;
+    QVBoxLayout *top = new QVBoxLayout();
+    topWidget->setLayout(top);
     top->addWidget(videoWidget);
     top->addWidget(videoBay);
+
+    //buttons in column to left
+    QWidget *leftButtonsWidget = new QWidget;
+    AddFile *addFileButton = new AddFile(leftButtonsWidget, *layout);
+    addFileButton->videoButtonsWidget=buttonWidget;
+    addFileButton->videoButtonsLayout=layout;
+    addFileButton->player=player;
+    addFileButton->buttons=buttons;
+    addFileButton->videos=videos;
+    QVBoxLayout *leftColumn = new QVBoxLayout();
+    leftButtonsWidget->setLayout(leftColumn);
+    leftColumn->addWidget(addFileButton);
+
+    // create the main window and layout
+    QWidget window;
+    QHBoxLayout *main = new QHBoxLayout();
+    window.setLayout(main);
+    window.setWindowTitle("tomeo");
+    window.setMinimumSize(100, 710);
+
+    main->addWidget(leftButtonsWidget);
+    main->addWidget(topWidget);
+
 
     // showtime!
     window.show();
