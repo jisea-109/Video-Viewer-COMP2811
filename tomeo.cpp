@@ -181,7 +181,7 @@ int main(int argc, char *argv[]) {
     QHBoxLayout *main = new QHBoxLayout();
     window.setLayout(main);
     window.setWindowTitle("tomeo");
-    window.setMinimumSize(100, 710);
+    window.setMinimumSize(100, 730);
 
     main->addWidget(leftButtonsWidget);
     main->addWidget(topWidget);
