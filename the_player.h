@@ -10,6 +10,8 @@
 #include <QMediaPlayer>
 #include "the_button.h"
 #include <vector>
+#include <QLabel>
+#include <QSlider>
 
 using namespace std;
 
@@ -20,7 +22,6 @@ Q_OBJECT
 private:
     vector<TheButtonInfo>* infos;
     vector<TheButton*>* buttons;
-    QTimer* mTimer;
     long updateCount = 0;
 
 public:
@@ -30,16 +31,31 @@ public:
     }
 
     // all buttons have been setup, store pointers here
-    void setContent(std::vector<TheButton*>*, vector<TheButtonInfo>* i);
+    void setContent(vector<TheButton*>* b, vector<TheButtonInfo>* i);
 
+    // video length
+    int length;
+    // timer
+    QLabel *timer_text;
+    // time_scroller
+    QSlider *time_scroller;
 private slots:
 
     void playStateChanged (QMediaPlayer::State ms);
+
 
 public slots:
 
     // start playing this ButtonInfo
     void jumpTo (TheButtonInfo* button);
+    //timer setting
+    void setTimer(int currentInfo);
+    // jump to in video
+    void jumpToinVideo (int sec);
+    // set the range of scroller; 0 to video end time
+    void durationChanged(int duration);
+     // set the position of scroller
+    void positionChanged(int progress);
 };
 
 #endif //CW2_THE_PLAYER_H
