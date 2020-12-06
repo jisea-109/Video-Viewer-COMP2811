@@ -10,7 +10,6 @@
 #include <QMediaPlayer>
 #include "the_button.h"
 #include <vector>
-#include <QTimer>
 
 using namespace std;
 
@@ -28,20 +27,12 @@ public:
     ThePlayer() : QMediaPlayer(NULL) {
         setVolume(0); // be slightly less annoying
         connect (this, SIGNAL (stateChanged(QMediaPlayer::State)), this, SLOT (playStateChanged(QMediaPlayer::State)) );
-
-        mTimer = new QTimer(NULL);
-        mTimer->setInterval(1000); // 1000ms is one second between ...
-        mTimer->start();
-        connect( mTimer, SIGNAL (timeout()), SLOT ( shuffle() ) ); // ...running shuffle method
     }
 
     // all buttons have been setup, store pointers here
-    void setContent(vector<TheButton*>* b, vector<TheButtonInfo>* i);
+    void setContent(std::vector<TheButton*>*, vector<TheButtonInfo>* i);
 
 private slots:
-
-    // change the image and video for one button every one second
-    void shuffle();
 
     void playStateChanged (QMediaPlayer::State ms);
 

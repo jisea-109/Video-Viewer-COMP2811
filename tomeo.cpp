@@ -25,6 +25,10 @@
 #include <QMessageBox>
 #include <QtCore/QDir>
 #include <QtCore/QDirIterator>
+#include <QLabel>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <utility>
 #include "the_player.h"
 #include "the_button.h"
 
@@ -104,45 +108,65 @@ int main(int argc, char *argv[]) {
         }
         exit(-1);
     }
-
     // the widget that will show the video
     QVideoWidget *videoWidget = new QVideoWidget;
+    videoWidget->setMaximumHeight(500);
+    videoWidget->setMinimumHeight(500);
 
     // the QMediaPlayer which controls the playback
     ThePlayer *player = new ThePlayer;
     player->setVideoOutput(videoWidget);
 
-    // a row of buttons
+    // a scrolling row of buttons
+    QScrollArea* videoBay = new QScrollArea();
+    videoBay->resize(1000, 180);
+
     QWidget *buttonWidget = new QWidget();
+    buttonWidget->resize(1200, 165);
+
     // a list of the buttons
     vector<TheButton*> buttons;
+
     // the buttons are arranged horizontally
     QHBoxLayout *layout = new QHBoxLayout();
     buttonWidget->setLayout(layout);
 
-
-    // create the four buttons
-    for ( int i = 0; i < 4; i++ ) {
+    // create the buttons
+    for ( unsigned int i = 0; i < videos.size(); i++ ) {
+        // create the button & add it to the button collection
         TheButton *button = new TheButton(buttonWidget);
         button->connect(button, SIGNAL(jumpTo(TheButtonInfo* )), player, SLOT (jumpTo(TheButtonInfo* ))); // when clicked, tell the player to play.
         buttons.push_back(button);
-        layout->addWidget(button);
+
+        // create label for the button
+        QLabel* buttonTitle = new QLabel(QString(videos[i].url->fileName()));
+        buttonTitle->setAlignment(Qt::AlignCenter);
+
+        // pair up the label & button in a VBoxLayout object i.e. make the label appear beneath the button
+        QVBoxLayout* nextPair = new QVBoxLayout();
+        nextPair->addWidget(button);
+        nextPair->addWidget(buttonTitle);
+
+        layout->addLayout(nextPair);
         button->init(&videos.at(i));
     }
 
     // tell the player what buttons and videos are available
-    player->setContent(&buttons, & videos);
+    player->setContent(&buttons, &videos);
+
+    // set the widget of the scrolling bay (containing all the buttons & labels)
+    videoBay->setWidget(buttonWidget);
 
     // create the main window and layout
     QWidget window;
     QVBoxLayout *top = new QVBoxLayout();
     window.setLayout(top);
     window.setWindowTitle("tomeo");
-    window.setMinimumSize(800, 680);
+    window.setMinimumSize(1000, 710);
 
     // add the video and the buttons to the top level widget
     top->addWidget(videoWidget);
-    top->addWidget(buttonWidget);
+    top->addWidget(videoBay);
 
     // showtime!
     window.show();
