@@ -131,6 +131,21 @@ int main(int argc, char *argv[]) {
     QHBoxLayout *layout = new QHBoxLayout();
     buttonWidget->setLayout(layout);
 
+    // horizontal time slider
+    QSlider *slider = new QSlider(Qt::Horizontal);
+    player->time_scroller = slider;
+
+    // timer
+    QLabel *label = new QLabel(); //timer
+    player->timer_text = label;
+
+    // connect slider to jumpToinVideo function
+    player->connect(slider, &QSlider::sliderMoved, player, &ThePlayer::jumpToinVideo);
+    // connect time tracker
+    player->connect(player, &QMediaPlayer::durationChanged, player, &ThePlayer::durationChanged);
+    // connect current duration
+    player->connect(player, &QMediaPlayer::positionChanged, player, &ThePlayer::positionChanged);
+
     // create the buttons
     for ( unsigned int i = 0; i < videos.size(); i++ ) {
         // create the button & add it to the button collection
@@ -162,6 +177,8 @@ int main(int argc, char *argv[]) {
     QVBoxLayout *top = new QVBoxLayout();
     topWidget->setLayout(top);
     top->addWidget(videoWidget);
+    top->addWidget(label); // add timer
+    top->addWidget(slider); // add slider
     top->addWidget(videoBay);
 
     //buttons in column to left
