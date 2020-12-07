@@ -34,7 +34,7 @@ public:
     void setContent(vector<TheButton*>* b, vector<TheButtonInfo>* i);
 
     // video length
-    int length;
+    int length = 0;
     // timer
     QLabel *timer_text;
     // time_scroller
