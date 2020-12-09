@@ -18,8 +18,18 @@ void AddFile:: addTheFile(){
     TheButton *button = new TheButton(videoButtonsWidget);
     button->connect(button, SIGNAL(jumpTo(TheButtonInfo* )), player, SLOT (jumpTo(TheButtonInfo* ))); // when clicked, tell the player to play.
     buttons.push_back(button);
-    videoButtonsLayout->addWidget(button);
+    // create label for the button
+    QLabel* buttonTitle = new QLabel(QString(videos[0].url->fileName()));
+    buttonTitle->setAlignment(Qt::AlignCenter);
+
+    QVBoxLayout* nextPair = new QVBoxLayout();
+    nextPair->addWidget(button);
+    nextPair->addWidget(buttonTitle);
+    pairs->push_back(nextPair);
+    videoButtonsLayout->addLayout(nextPair);
     button->init(&videos.at(0));
+    //videoButtonsLayout->addWidget(button);
+    //button->init(&videos.at(0));
 
     QMessageBox *popUp= new QMessageBox;
     popUp->setText("Test!");

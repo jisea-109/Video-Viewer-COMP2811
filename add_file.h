@@ -17,12 +17,17 @@ public:
         connect(this, SIGNAL(released()), this, SLOT(showMessage()));
 
     }
+    void setPairsVector(vector<QVBoxLayout*>* p) {
+        pairs = p;
+    }
     QWidget *videoButtonsWidget;
     QHBoxLayout *videoButtonsLayout;
     ThePlayer *player;
     vector<TheButton*> buttons;
     vector<TheButtonInfo> videos;
 
+private:
+    vector<QVBoxLayout*> *pairs;
 
 public slots:
     void showMessage();
