@@ -31,6 +31,7 @@
 #include "the_player.h"
 #include "the_button.h"
 #include "add_file.h"
+#include "manage_button.h"
 
 
 using namespace std;
@@ -147,6 +148,9 @@ int main(int argc, char *argv[]) {
     player->connect(player, &QMediaPlayer::positionChanged, player, &ThePlayer::positionChanged);
 
     // create the buttons
+
+    //vector of pairs
+    vector<QVBoxLayout*> pairs;
     for ( unsigned int i = 0; i < videos.size(); i++ ) {
         // create the button & add it to the button collection
         TheButton *button = new TheButton(buttonWidget);
@@ -161,7 +165,7 @@ int main(int argc, char *argv[]) {
         QVBoxLayout* nextPair = new QVBoxLayout();
         nextPair->addWidget(button);
         nextPair->addWidget(buttonTitle);
-
+        pairs.push_back(nextPair);
         layout->addLayout(nextPair);
         button->init(&videos.at(i));
     }
@@ -189,9 +193,64 @@ int main(int argc, char *argv[]) {
     addFileButton->player=player;
     addFileButton->buttons=buttons;
     addFileButton->videos=videos;
+    addFileButton->setPairsVector(&pairs);
+    //Left column layout
     QVBoxLayout *leftColumn = new QVBoxLayout();
     leftButtonsWidget->setLayout(leftColumn);
     leftColumn->addWidget(addFileButton);
+
+    //(Load folders)
+
+    //Extract dir names and paths
+    vector<string>dirnames;
+    vector<QString>paths;
+    QDir direct(QString::fromStdString(argv[1]));
+    direct.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
+    QFileInfoList list = direct.entryInfoList();
+    for(int i = 0; i < list.size(); i++) {
+        QFileInfo fileinfo = list.at(i);
+        //dirs.push_back(fileinfo.fileName());
+        paths.push_back(fileinfo.filePath());
+        qDebug()<<fileinfo.filePath();
+        string str = fileinfo.fileName().toStdString();
+        qDebug()<<QString::fromStdString(str);
+        dirnames.push_back(str);
+    }
+    //Create Home Button
+    string str = "Home";
+    QString name = QString::fromStdString(str);
+    ManageButton *btn = new ManageButton(leftButtonsWidget);
+    //btn->setLayout(leftColumn);
+    btn->setThePlayer(player);
+    btn->setVideoWidget(videoWidget);
+    btn->setButtonWidget(buttonWidget);
+    btn->setVideos(&videos);
+    btn->setLlayout(layout);
+    btn->setGlobal(&buttons);
+    btn->setPath(argv[1]);
+    btn->setText(name);
+    btn->setsublayout(&pairs);
+    leftColumn->addWidget(btn);
+
+    //Load the directories
+    for(int i = 0; i < dirnames.size(); i++) {
+        QString name = QString::fromStdString(dirnames.at(i));
+        ManageButton *btn = new ManageButton(leftButtonsWidget);
+        //btn->setLayout(leftColumn);
+        btn->setThePlayer(player);
+        btn->setVideoWidget(videoWidget);
+        btn->setButtonWidget(buttonWidget);
+        btn->setVideos(&videos);
+        btn->setLlayout(layout);
+        btn->setGlobal(&buttons);
+        btn->setPath(paths.at(i));
+        btn->setText(name);
+        btn->setsublayout(&pairs);
+        leftColumn->addWidget(btn);
+    }
+
+
+    //(Load folders end)
 
     // create the main window and layout
     QWidget window;
